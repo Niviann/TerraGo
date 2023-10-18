@@ -28,7 +28,8 @@ type Vector3 struct {
 }
 
 func dot(g Vector2, x, y float64) float64 {
-	return g.x*x + g.y*y
+	var vector_length float64 = math.Sqrt(float64(math.Pow(float64(x+1), 2) + math.Pow(float64(y+1), 2)))
+	return g.x*(x+1)/vector_length + g.y*(y+1)/vector_length
 }
 
 func randomRotatedVector2() Vector2 {
@@ -50,21 +51,11 @@ func randomGradient() {
 		chunk = append(chunk, row)
 	}
 
-	max := chunk[0][0]
-
-	for _, row := range chunk {
-		for _, value := range row {
-			if value > max {
-				max = value
-			}
-		}
-	}
-
 	img := image.NewGray(image.Rect(0, 0, chunk_size, chunk_size))
 	for y := 0; y < chunk_size; y++ {
 		for x := 0; x < chunk_size; x++ {
 			// Assuming float values are in the range [0, 1]
-			grayValue := uint8(chunk[x][y] / max * 255)
+			grayValue := uint8((chunk[x][y] + 1) / 2 * 255)
 			img.SetGray(x, y, color.Gray{Y: grayValue})
 		}
 	}
