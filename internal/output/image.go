@@ -1,13 +1,14 @@
-package main
+package output
 
 import (
 	"image"
 	"image/color"
 	"image/png"
 	"os"
+	"path/filepath"
 )
 
-func create_image(slice [][]float64, name string) {
+func CreateImage(slice [][]float64, name string) {
 	// create image from slice
 	img := image.NewGray(image.Rect(0, 0, len(slice), len(slice)))
 	for y := 0; y < len(slice); y++ {
@@ -17,15 +18,26 @@ func create_image(slice [][]float64, name string) {
 		}
 	}
 
-	outputFile, err := os.Create(name + ".png")
+	outputDir := "../../output"
+	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
+		panic("Error creating output directory: " + err.Error())
+	}
+
+	outputPath := filepath.Join(outputDir, name+".png")
+
+	outputFile, err := os.Create(outputPath)
 	if err != nil {
-		panic(err)
+		panic("Error creating output file: " + err.Error())
 	}
 	defer outputFile.Close()
-	png.Encode(outputFile, img)
+
+	// Encode the image as PNG and write it to the file
+	if err := png.Encode(outputFile, img); err != nil {
+		panic("Error encoding PNG: " + err.Error())
+	}
 }
 
-func color_image(slice [][]float64) {
+func ColorImage(slice [][]float64, name string) {
 	pixels := make([][]color.RGBA, len(slice))
 	for y := 0; y < len(slice); y++ {
 		pixels[y] = make([]color.RGBA, len(slice))
@@ -57,15 +69,21 @@ func color_image(slice [][]float64) {
 		}
 	}
 
-	outputFile, err := os.Create("output.png")
+	outputDir := "../../output"
+	if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
+		panic("Error creating output directory: " + err.Error())
+	}
+
+	outputPath := filepath.Join(outputDir, name+".png")
+
+	outputFile, err := os.Create(outputPath)
 	if err != nil {
-		panic(err)
+		panic("Error creating output file: " + err.Error())
 	}
 	defer outputFile.Close()
 
-	// Encode the image to PNG and save it to the file
+	// Encode the image as PNG and write it to the file
 	if err := png.Encode(outputFile, img); err != nil {
-		panic(err)
+		panic("Error encoding PNG: " + err.Error())
 	}
-
 }
